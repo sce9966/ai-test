@@ -87,7 +87,7 @@ ORM 约定：**TypeORM**（已接线 MySQL）；Redis 使用 **ioredis**。本�
 | 区域 | 目标栈 | 状态 |
 |------|--------|------|
 | `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线已落地 |
-| `apps/api` | NestJS + TypeORM + MySQL + Redis | 可启动；经 `.env` 接入 DB/Redis 与健康检查 |
+| `apps/api` | NestJS + TypeORM + MySQL + Redis | 可启动；经 `.env` 接入 DB/Redis；JWT 登录鉴权见 `apps/api/README.md` |
 
 布局壳、鉴权、主题等能力由对应功能 Issue 负责。
 

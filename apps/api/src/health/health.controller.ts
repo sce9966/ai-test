@@ -1,10 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
+import { Public } from '../common/decorators/public.decorator';
 import { RedisHealthIndicator } from './redis.health';
 
 /**
  * 健康检查控制器：报告进程存活及 MySQL / Redis 连通性。
  */
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(
