@@ -35,7 +35,7 @@ pnpm dev
 
 | 变量 | 含义 |
 |------|------|
-| `VITE_APP_TITLE` | 浏览器标题前缀 |
+| `VITE_APP_TITLE` | 浏览器标题前缀 / 顶栏展示名 |
 | `VITE_API_BASE_URL` | axios `baseURL`（默认 `/api`） |
 | `VITE_API_TIMEOUT_MS` | 请求超时毫秒 |
 | `VITE_API_TOKEN` | 鉴权 Token **占位**，仅本地调试 |
@@ -44,15 +44,24 @@ pnpm dev
 
 ```text
 src/
-  api/           # axios 实例与按域 API 模块
-  components/ui/ # shadcn-vue 组件源码
-  lib/           # cn 等工具
-  router/        # Vue Router
-  stores/        # Pinia
-  views/         # 路由页面（布局壳见后续 Issue）
+  api/                 # axios 实例与按域 API 模块
+  components/layout/   # 中后台布局壳（侧栏 / 顶栏 / 面包屑）
+  components/ui/       # shadcn-vue 组件源码
+  config/              # 静态导航等配置
+  layouts/             # 路由布局（AdminLayout）
+  lib/                 # cn 等工具
+  router/              # Vue Router
+  stores/              # Pinia
+  views/               # 路由页面
 ```
+
+## 布局壳
+
+- `layouts/AdminLayout.vue`：`SidebarProvider` + 侧栏 + 顶栏 + 主内容 `RouterView`
+- 静态菜单见 `config/nav.ts`（动态菜单 / 权限由后续 Stage 叠加）
+- 面包屑由路由 `meta.title` 推导
 
 ## 边界说明
 
-- 本包提供可启动工程基线与 UI 组件约定；**中后台布局壳**由独立 Issue 叠加，避免重复脚手架。
-- 主题系统、登录鉴权、业务 CRUD 不在本基线范围。
+- 主题切换（白 / 浅蓝）由独立 Issue 叠加。
+- 登录鉴权、动态菜单、业务 CRUD 不在本 Issue 范围。
