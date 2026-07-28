@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Public } from './common/decorators/public.decorator';
 
 /**
  * 根路由控制器（工程基线占位，不含业务 API）。
@@ -13,6 +14,7 @@ export class AppController {
    *
    * @returns 探活消息
    */
+  @Public()
   @Get()
   getHello(): { message: string } {
     return this.appService.getHello();
