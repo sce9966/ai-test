@@ -6,14 +6,7 @@
 
 ## 前置依赖
 
-在仓库根目录拉起 MySQL 与 Redis：
-
-```bash
-pnpm docker:up
-# 或：docker compose up -d
-```
-
-确认容器健康后，再启动 API。
+本仓库**不**通过 docker-compose 拉起 MySQL / Redis。请先准备好已有实例，并在 `.env` 中填写连接信息（可复制 `.env.example`）。
 
 ## 本地启动
 
@@ -22,7 +15,7 @@ pnpm docker:up
 ```bash
 pnpm install
 cp apps/api/.env.example apps/api/.env
-pnpm docker:up
+# 编辑 apps/api/.env，指向已有 MySQL / Redis
 pnpm dev:api
 ```
 
@@ -43,12 +36,12 @@ pnpm dev
 
 ## 环境变量
 
-复制 `.env.example` 为 `.env` 后按需修改。默认值与根目录 `docker-compose.yml` 对齐：
+复制 `.env.example` 为 `.env` 后按需修改，**指向已有 MySQL / Redis**：
 
 | 变量 | 说明 |
 |------|------|
 | `PORT` / `NODE_ENV` | HTTP 端口与运行环境 |
-| `DB_*` | MySQL 连接（TypeORM；主机端口默认 **3307**） |
+| `DB_*` | MySQL 连接（TypeORM） |
 | `DB_SYNCHRONIZE` | 仅 development 可 `true`；生产必须 `false` 并走 Migration |
 | `REDIS_*` | Redis 连接（ioredis） |
 
@@ -88,5 +81,5 @@ apps/api/
 
 ## 边界
 
-- **本 Issue**：可启动 Nest、docker-compose、TypeORM 连 MySQL、Redis ping、健康检查
-- **非目标**：登录鉴权、业务 CRUD、Seed 数据
+- **本 Issue**：可启动 Nest、TypeORM 经 `.env` 连 MySQL、Redis ping、健康检查
+- **非目标**：本仓库 docker-compose 拉起依赖、登录鉴权、业务 CRUD、Seed 数据

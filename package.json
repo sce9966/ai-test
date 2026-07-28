@@ -15,9 +15,6 @@
     "build:api": "pnpm --filter @admin-template/api build",
     "lint:web": "pnpm --filter @admin-template/web lint",
     "lint:api": "pnpm --filter @admin-template/api lint",
-    "typecheck:web": "pnpm --filter @admin-template/web type-check",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
-    "docker:ps": "docker compose ps"
+    "typecheck:web": "pnpm --filter @admin-template/web type-check"
   }
 }

@@ -9,8 +9,7 @@
 ├── apps/
 │   ├── web/          # 前端（Vue + Vite + shadcn-vue + Tailwind）
 │   └── api/          # 后端（NestJS + TypeORM + MySQL + Redis）
-├── docker-compose.yml # 本地 MySQL + Redis
-├── package.json      # 根脚本入口（dev:web / dev:api / docker:*）
+├── package.json      # 根脚本入口（dev:web / dev:api 等）
 ├── pnpm-workspace.yaml
 └── README.md
 ```
@@ -19,7 +18,7 @@
 
 - Node.js >= 20（前端脚手架推荐 Node 22+）
 - 包管理器固定 **pnpm**（根 `package.json` 已声明 `packageManager`）
-- Docker / Docker Compose（本地 MySQL、Redis）
+- 已有 **MySQL** 与 **Redis** 实例（本仓库不通过 docker-compose 拉起依赖）
 
 启用 Corepack（推荐）：
 
@@ -35,16 +34,6 @@ corepack enable
 pnpm install
 ```
 
-## 本地基础设施（MySQL + Redis）
-
-```bash
-pnpm docker:up
-# 查看状态：pnpm docker:ps
-# 停止：pnpm docker:down
-```
-
-默认账号与 `apps/api/.env.example` 对齐：MySQL `root` / `change_me`，库名 `admin_template`，主机端口 **3307**（容器内仍为 3306，避免与本机 MySQL 冲突）；Redis 无密码、端口 `6379`。
-
 ## 分别启动前后端
 
 ```bash
@@ -53,7 +42,7 @@ pnpm dev:web
 
 # 后端开发服务（apps/api，NestJS）
 cp apps/api/.env.example apps/api/.env
-pnpm docker:up
+# 编辑 apps/api/.env，填写已有 MySQL / Redis 连接信息
 pnpm dev:api
 ```
 
@@ -76,11 +65,11 @@ pnpm --filter @admin-template/web type-check
 
 ### 后端（apps/api）快速说明
 
-1. 复制环境样例：`cp apps/api/.env.example apps/api/.env`
-2. 根目录执行 `pnpm docker:up`，再 `pnpm dev:api`，默认 `http://localhost:3000`
+1. 复制环境样例：`cp apps/api/.env.example apps/api/.env`，改为指向**已有** MySQL / Redis
+2. 根目录执行 `pnpm dev:api`，默认 `http://localhost:3000`
 3. 详细说明见 `apps/api/README.md`
 
-ORM 约定：**TypeORM**（已接线 MySQL）；Redis 使用 **ioredis**。
+ORM 约定：**TypeORM**（已接线 MySQL）；Redis 使用 **ioredis**。本仓库**不**提供 docker-compose 拉起依赖。
 
 ## 前端环境变量
 
@@ -98,8 +87,7 @@ ORM 约定：**TypeORM**（已接线 MySQL）；Redis 使用 **ioredis**。
 | 区域 | 目标栈 | 状态 |
 |------|--------|------|
 | `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线已落地 |
-| `apps/api` | NestJS + TypeORM + MySQL + Redis | 可启动；已接入 DB/Redis 与健康检查 |
-| `docker-compose.yml` | MySQL 8 + Redis | 本地依赖（主机 MySQL 端口 3307） |
+| `apps/api` | NestJS + TypeORM + MySQL + Redis | 可启动；经 `.env` 接入 DB/Redis 与健康检查 |
 
 布局壳、鉴权、主题等能力由对应功能 Issue 负责。
 
