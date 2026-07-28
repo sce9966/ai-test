@@ -17,13 +17,9 @@ const counter = useCounterStore()
     </div>
 
     <div class="flex flex-wrap items-center gap-3">
-      <Button type="button" @click="counter.increment">
-        Pinia 计数：{{ counter.count }}
-      </Button>
+      <Button type="button" @click="counter.increment"> Pinia 计数：{{ counter.count }} </Button>
       <Button type="button" variant="outline" as-child>
-        <a href="https://www.shadcn-vue.com/" target="_blank" rel="noreferrer">
-          shadcn-vue
-        </a>
+        <a href="https://www.shadcn-vue.com/" target="_blank" rel="noreferrer"> shadcn-vue </a>
       </Button>
     </div>
   </main>

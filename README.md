@@ -8,7 +8,7 @@
 .
 ├── apps/
 │   ├── web/          # 前端（Vue + Vite + shadcn-vue + Tailwind）
-│   └── api/          # 后端（NestJS + MySQL + Redis）
+│   └── api/          # 后端（NestJS + TypeORM + MySQL + Redis）
 ├── package.json      # 根脚本入口（dev:web / dev:api 等）
 ├── pnpm-workspace.yaml
 └── README.md
@@ -39,7 +39,7 @@ pnpm install
 # 前端开发服务（apps/web）
 pnpm dev:web
 
-# 后端开发服务（apps/api；脚手架落地后可用）
+# 后端开发服务（apps/api，NestJS）
 pnpm dev:api
 ```
 
@@ -49,9 +49,19 @@ pnpm dev:api
 
 ```bash
 pnpm build:web
+pnpm build:api
 pnpm lint:web
+pnpm lint:api
 pnpm --filter @admin-template/web type-check
 ```
+
+### 后端（apps/api）快速说明
+
+1. 复制环境样例：`cp apps/api/.env.example apps/api/.env`（按需改端口；DB/Redis 为本阶段占位，**不必**真实可达）
+2. 根目录执行 `pnpm dev:api`，默认 `http://localhost:3000`，`GET /` 返回探活 JSON
+3. 详细说明见 `apps/api/README.md`
+
+ORM 约定为 **TypeORM**；docker-compose、实连与健康检查由后续基础设施 Issue（相对布局壳 / 鉴权等功能 Issue）落地，本 README 仅描述仓库安装与启动入口。
 
 ## 前端环境变量
 
@@ -69,7 +79,7 @@ pnpm --filter @admin-template/web type-check
 | 区域 | 目标栈 | 状态 |
 |------|--------|------|
 | `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线已落地 |
-| `apps/api` | NestJS + TypeORM + MySQL + Redis | 占位或由后端基线 Issue 落地 |
+| `apps/api` | NestJS + TypeORM + MySQL + Redis | 工程基线已落地（可启动；未实连 DB/Redis） |
 
 布局壳、鉴权、主题等能力由对应功能 Issue 负责，本 README 仅描述仓库安装与启动入口。
 
