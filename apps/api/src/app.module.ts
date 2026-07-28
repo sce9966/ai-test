@@ -3,25 +3,37 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import appConfig from './config/app.config';
+import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
+import jwtConfig from './config/jwt.config';
 import redisConfig from './config/redis.config';
 import { envValidationSchema } from './config/env.validation';
+import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './database/database.module';
+import { HealthModule } from './health/health.module';
+import { RedisModule } from './redis/redis.module';
+import { UsersModule } from './users/users.module';
 
 /**
- * 根模块：加载全局配置（端口 / MySQL / Redis 占位），不接线真实 DB 或缓存。
+ * 根模块：全局配置 + TypeORM(MySQL) + Redis + 鉴权 + 健康检查。
  */
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [appConfig, databaseConfig, redisConfig],
+      load: [appConfig, databaseConfig, redisConfig, jwtConfig, authConfig],
       validationSchema: envValidationSchema,
       validationOptions: {
         abortEarly: false,
         allowUnknown: true,
       },
     }),
+    DatabaseModule,
+    RedisModule,
+    UsersModule,
+    AuthModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

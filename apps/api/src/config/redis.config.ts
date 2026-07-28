@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 /**
- * Redis 连接占位配置（本 Issue 不实连；供后续基础设施 Issue 使用）。
+ * Redis 连接配置命名空间。
  */
 export default registerAs('redis', () => ({
   host: process.env.REDIS_HOST ?? '127.0.0.1',

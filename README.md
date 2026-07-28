@@ -18,6 +18,7 @@
 
 - Node.js >= 20（前端脚手架推荐 Node 22+）
 - 包管理器固定 **pnpm**（根 `package.json` 已声明 `packageManager`）
+- 已有 **MySQL** 与 **Redis** 实例（本仓库不通过 docker-compose 拉起依赖）
 
 启用 Corepack（推荐）：
 
@@ -40,8 +41,15 @@ pnpm install
 pnpm dev:web
 
 # 后端开发服务（apps/api，NestJS）
+cp apps/api/.env.example apps/api/.env
+# 编辑 apps/api/.env，填写已有 MySQL / Redis 连接信息
 pnpm dev:api
 ```
+
+后端健康检查：
+
+- `GET http://localhost:3000/health/live` — 进程存活
+- `GET http://localhost:3000/health` — MySQL + Redis
 
 等价于对对应 workspace 包执行 `pnpm --filter <pkg> dev`。
 
@@ -57,15 +65,15 @@ pnpm --filter @admin-template/web type-check
 
 ### 后端（apps/api）快速说明
 
-1. 复制环境样例：`cp apps/api/.env.example apps/api/.env`（按需改端口；DB/Redis 为本阶段占位，**不必**真实可达）
-2. 根目录执行 `pnpm dev:api`，默认 `http://localhost:3000`，`GET /` 返回探活 JSON
+1. 复制环境样例：`cp apps/api/.env.example apps/api/.env`，改为指向**已有** MySQL / Redis
+2. 根目录执行 `pnpm dev:api`，默认 `http://localhost:3000`
 3. 详细说明见 `apps/api/README.md`
 
-ORM 约定为 **TypeORM**；docker-compose、实连与健康检查由后续基础设施 Issue（相对布局壳 / 鉴权等功能 Issue）落地，本 README 仅描述仓库安装与启动入口。
+ORM 约定：**TypeORM**（已接线 MySQL）；Redis 使用 **ioredis**。本仓库**不**提供 docker-compose 拉起依赖。
 
 ## 前端环境变量
 
-见 `apps/web/.env.example` 与 `apps/web/README.md`。本地复制为 `apps/web/.env` 使用，**勿提交真实密钥 / Token**。
+见 `apps/web/.env.example` 与 `apps/web/README.md`。本地复制为 `apps/web/.env` 使用。**勿提交真实密钥 / Token**。
 
 | 变量 | 含义 |
 |------|------|
@@ -79,9 +87,9 @@ ORM 约定为 **TypeORM**；docker-compose、实连与健康检查由后续基�
 | 区域 | 目标栈 | 状态 |
 |------|--------|------|
 | `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线已落地 |
-| `apps/api` | NestJS + TypeORM + MySQL + Redis | 工程基线已落地（可启动；未实连 DB/Redis） |
+| `apps/api` | NestJS + TypeORM + MySQL + Redis | 可启动；经 `.env` 接入 DB/Redis；JWT 登录鉴权见 `apps/api/README.md` |
 
-布局壳、鉴权、主题等能力由对应功能 Issue 负责，本 README 仅描述仓库安装与启动入口。
+布局壳、鉴权、主题等能力由对应功能 Issue 负责。
 
 ## 安全
 
