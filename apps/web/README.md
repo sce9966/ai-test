@@ -46,13 +46,22 @@ pnpm dev
 src/
   api/           # axios 实例与按域 API 模块
   components/ui/ # shadcn-vue 组件源码
+  components/theme/  # 主题切换器
+  components/layout/ # 顶栏等布局占位（完整壳见 AIL-6）
+  themes/        # 主题注册表与 applyTheme
   lib/           # cn 等工具
   router/        # Vue Router
-  stores/        # Pinia
-  views/         # 路由页面（布局壳见后续 Issue）
+  stores/        # Pinia（含 theme）
+  views/         # 路由页面
+docs/
+  themes.md      # 主题约定与「如何新增第三套主题」
 ```
+
+## 主题
+
+默认 `theme-white`，可切换 `theme-light-blue`，偏好写入 `localStorage`。详情见 [`docs/themes.md`](./docs/themes.md)。
 
 ## 边界说明
 
-- 本包提供可启动工程基线与 UI 组件约定；**中后台布局壳**由独立 Issue 叠加，避免重复脚手架。
-- 主题系统、登录鉴权、业务 CRUD 不在本基线范围。
+- 本包提供可启动工程基线、主题系统与顶栏主题切换；**完整侧栏布局壳**由 AIL-6 叠加时可复用 `ThemeSwitcher` / `AppHeader`。
+- 登录鉴权、业务 CRUD 不在本阶段范围。

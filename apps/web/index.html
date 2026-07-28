@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="theme-white">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Admin Template</title>
+    <!-- 在首屏 CSS 前恢复主题，减少刷新闪烁；键名需与 src/themes/index.ts 保持一致 -->
+    <script>
+      (function () {
+        try {
+          var KEY = 'admin-template-theme'
+          var DEFAULT = 'theme-white'
+          var ALLOWED = { 'theme-white': 1, 'theme-light-blue': 1 }
+          var stored = localStorage.getItem(KEY)
+          var theme = ALLOWED[stored] ? stored : DEFAULT
+          var root = document.documentElement
+          root.classList.remove('theme-white', 'theme-light-blue')
+          root.classList.add(theme)
+          root.setAttribute('data-theme', theme)
+        } catch (e) {
+          document.documentElement.classList.add('theme-white')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
