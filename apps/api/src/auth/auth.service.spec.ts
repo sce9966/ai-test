@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { TokenBlacklistService } from './token-blacklist.service';
 import { UsersService } from '../users/users.service';
 import { UserEntity, UserStatus } from '../users/entities/user.entity';
+import { RbacService } from '../rbac/rbac.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -42,6 +43,15 @@ describe('AuthService', () => {
       add: jest.fn().mockResolvedValue(undefined),
     };
 
+    const rbacService = {
+      getUserPermissions: jest.fn().mockResolvedValue({
+        userId: 'user-1',
+        tenantId: 'default',
+        roles: ['admin'],
+        permissions: ['system:user:list'],
+      }),
+    };
+
     const configService = {
       get: jest.fn((key: string, defaultValue?: unknown) => {
         const map: Record<string, unknown> = {
@@ -60,6 +70,7 @@ describe('AuthService', () => {
         { provide: JwtService, useValue: jwtService },
         { provide: ConfigService, useValue: configService },
         { provide: TokenBlacklistService, useValue: tokenBlacklistService },
+        { provide: RbacService, useValue: rbacService },
       ],
     }).compile();
 

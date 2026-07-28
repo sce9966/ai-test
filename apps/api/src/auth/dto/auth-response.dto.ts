@@ -46,4 +46,14 @@ export class CurrentUserResponseDto {
    * 显示名称。
    */
   displayName!: string;
+
+  /**
+   * 角色编码列表（经 user_roles 继承；登录时可选为空，详情接口会补齐）。
+   */
+  roles!: string[];
+
+  /**
+   * 权限码列表（经角色继承；供前端组件级控制）。
+   */
+  permissions!: string[];
 }

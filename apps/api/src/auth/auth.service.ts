@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { randomUUID } from 'node:crypto';
 import { UsersService } from '../users/users.service';
 import { UserEntity, UserStatus } from '../users/entities/user.entity';
+import { RbacService } from '../rbac/rbac.service';
 import { LoginDto } from './dto/login.dto';
 import { CurrentUserResponseDto, LoginResponseDto } from './dto/auth-response.dto';
 import type { JwtPayload, JwtPayloadUser } from './interfaces/jwt-payload.interface';
@@ -25,6 +26,7 @@ export class AuthService implements OnModuleInit {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly tokenBlacklistService: TokenBlacklistService,
+    private readonly rbacService: RbacService,
   ) {}
 
   /**
@@ -98,7 +100,7 @@ export class AuthService implements OnModuleInit {
       accessToken,
       tokenType: 'Bearer',
       expiresIn: expiresInSeconds,
-      user: this.toCurrentUser(user),
+      user: await this.toCurrentUser(user),
     };
   }
 
@@ -130,17 +132,20 @@ export class AuthService implements OnModuleInit {
   }
 
   /**
-   * 将实体映射为对外用户视图。
+   * 将实体映射为对外用户视图（含角色与权限码）。
    *
    * @param user 用户实体
    * @returns 脱敏响应
    */
-  private toCurrentUser(user: UserEntity): CurrentUserResponseDto {
+  private async toCurrentUser(user: UserEntity): Promise<CurrentUserResponseDto> {
+    const rbac = await this.rbacService.getUserPermissions(user.tenantId, user.id);
     return {
       id: user.id,
       tenantId: user.tenantId,
       username: user.username,
       displayName: user.displayName,
+      roles: rbac.roles,
+      permissions: rbac.permissions,
     };
   }
 
