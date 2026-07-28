@@ -15,6 +15,7 @@
     "build:api": "pnpm --filter @admin-template/api build",
     "lint:web": "pnpm --filter @admin-template/web lint",
     "lint:api": "pnpm --filter @admin-template/api lint",
-    "typecheck:web": "pnpm --filter @admin-template/web type-check"
+    "typecheck:web": "pnpm --filter @admin-template/web type-check",
+    "test:baseline": "node --test tests/baseline/*.test.mjs"
   }
 }
