@@ -78,10 +78,10 @@ ORM 约定为 **TypeORM**；docker-compose、实连与健康检查由后续基�
 
 | 区域 | 目标栈 | 状态 |
 |------|--------|------|
-| `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线已落地 |
+| `apps/web` | Vue 3 + Vite + TypeScript + shadcn-vue + Tailwind | 工程基线 + 中后台布局壳已落地 |
 | `apps/api` | NestJS + TypeORM + MySQL + Redis | 工程基线已落地（可启动；未实连 DB/Redis） |
 
-布局壳、鉴权、主题等能力由对应功能 Issue 负责，本 README 仅描述仓库安装与启动入口。
+鉴权、主题、业务 CRUD 等能力由对应功能 Issue 负责，本 README 仅描述仓库安装与启动入口。
 
 ## 安全
 
