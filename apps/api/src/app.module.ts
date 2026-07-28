@@ -6,9 +6,12 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import redisConfig from './config/redis.config';
 import { envValidationSchema } from './config/env.validation';
+import { DatabaseModule } from './database/database.module';
+import { HealthModule } from './health/health.module';
+import { RedisModule } from './redis/redis.module';
 
 /**
- * 根模块：加载全局配置（端口 / MySQL / Redis 占位），不接线真实 DB 或缓存。
+ * 根模块：全局配置 + TypeORM(MySQL) + Redis + 健康检查。
  */
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { envValidationSchema } from './config/env.validation';
         allowUnknown: true,
       },
     }),
+    DatabaseModule,
+    RedisModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
