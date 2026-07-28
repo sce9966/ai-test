@@ -1,0 +1,20 @@
+{
+  "name": "enterprise-admin-template",
+  "private": true,
+  "version": "0.0.0",
+  "description": "企业级中后台管理模板（内部脚手架）monorepo 根工程",
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @admin-template/web dev",
+    "dev:api": "pnpm --filter @admin-template/api dev",
+    "build:web": "pnpm --filter @admin-template/web build",
+    "build:api": "pnpm --filter @admin-template/api build",
+    "lint:web": "pnpm --filter @admin-template/web lint",
+    "lint:api": "pnpm --filter @admin-template/api lint",
+    "typecheck:web": "pnpm --filter @admin-template/web type-check"
+  }
+}

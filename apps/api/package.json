@@ -1,0 +1,11 @@
+{
+  "name": "@admin-template/api",
+  "private": true,
+  "version": "0.0.0",
+  "description": "后端应用（NestJS + MySQL + Redis）— 脚手架占位",
+  "scripts": {
+    "dev": "node -e \"console.error('[apps/api] 脚手架尚未落地，见后续子 Issue（后端工程基线）'); process.exit(1)\"",
+    "build": "node -e \"console.error('[apps/api] 脚手架尚未落地，见后续子 Issue（后端工程基线）'); process.exit(1)\"",
+    "lint": "node -e \"console.error('[apps/api] 脚手架尚未落地，见后续子 Issue（后端工程基线）'); process.exit(1)\""
+  }
+}

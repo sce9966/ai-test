@@ -1,0 +1,5 @@
+# pnpm workspace — 覆盖 apps 下所有应用包
+packages:
+  - 'apps/*'
+allowBuilds:
+  vue-demi: true
