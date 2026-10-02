@@ -11,6 +11,6 @@ export class AppService {
    * @returns 探活消息对象
    */
   getHello(): { message: string } {
-    return { message: 'admin-template api is running' };
+    return { message: 'openkey api is running' };
   }
 }

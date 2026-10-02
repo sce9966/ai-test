@@ -2,4 +2,5 @@
 packages:
   - 'apps/*'
 allowBuilds:
+  '@scarf/scarf': set this to true or false
   vue-demi: true

@@ -28,23 +28,23 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useLayoutStore } from '@/stores/layout'
 import { useTabsStore } from '@/stores/tabs'
-import { clearAccessToken } from '@/utils/auth'
+import { useUserStore } from '@/stores/user'
 import { resolveBreadcrumbs, appMenus } from './menus'
 
 const route = useRoute()
 const router = useRouter()
 const layout = useLayoutStore()
 const tabsStore = useTabsStore()
+const userStore = useUserStore()
 const isFullscreen = ref(false)
 const refreshContent = inject<() => void>('layoutRefresh')
 
 const breadcrumbs = computed(() => resolveBreadcrumbs(appMenus, route.path))
 
-/** 演示用当前用户信息 */
-const currentUser = {
-  name: 'Admin',
-  account: 'admin',
-}
+const currentUser = computed(() => ({
+  name: userStore.displayName,
+  account: userStore.userInfo?.phone || userStore.userInfo?.email || '',
+}))
 
 /**
  * 切换浏览器全屏状态。
@@ -74,10 +74,10 @@ function onFullscreenChange() {
 }
 
 /**
- * 退出登录（前端演示：清除凭证、清空页签并跳转登录页）。
+ * 退出登录：清除凭证与用户信息，清空页签并跳转登录页。
  */
 function logout() {
-  clearAccessToken()
+  userStore.clearSession()
   tabsStore.resetTabs()
   void router.push('/login')
 }
@@ -201,14 +201,16 @@ onUnmounted(() => {
             aria-label="用户菜单"
             title="用户"
           >
-            {{ currentUser.name.slice(0, 1).toUpperCase() }}
+            {{ userStore.avatarLetter }}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-48">
           <DropdownMenuLabel class="font-normal">
             <div class="flex flex-col gap-0.5">
               <span class="text-sm font-medium text-foreground">{{ currentUser.name }}</span>
-              <span class="text-xs text-muted-foreground">{{ currentUser.account }}</span>
+              <span v-if="currentUser.account" class="text-xs text-muted-foreground">
+                {{ currentUser.account }}
+              </span>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

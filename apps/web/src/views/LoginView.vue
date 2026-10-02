@@ -10,25 +10,33 @@ import {
   MoonIcon,
   SunIcon,
 } from '@lucide/vue'
+import { isAxiosError } from 'axios'
+import { loginByPhone } from '@/api/auth'
+import type { ApiResult } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import SliderCaptcha from '@/components/login/SliderCaptcha.vue'
 import loginIllustration from '@/assets/login-illustration.svg'
-import { setAccessToken } from '@/utils/auth'
+import { useUserStore } from '@/stores/user'
+
+const REMEMBERED_PHONE_KEY = 'rememberedPhone'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const appTitle = import.meta.env.VITE_APP_TITLE || 'Admin Template'
 const brandName = computed(() => appTitle.replace(/\s+Template$/i, '') || 'Admin')
 
-const username = ref('admin')
+const phone = ref(localStorage.getItem(REMEMBERED_PHONE_KEY) || '13415743355')
 const password = ref('123456')
-const remember = ref(true)
+const remember = ref(Boolean(localStorage.getItem(REMEMBERED_PHONE_KEY)))
 const captchaPassed = ref(false)
 const showPassword = ref(false)
 const isDark = ref(false)
+const loading = ref(false)
+const errorMessage = ref('')
 
 /**
  * 同步并切换浅色 / 深色主题。
@@ -39,17 +47,59 @@ function toggleTheme() {
 }
 
 /**
- * 提交登录表单（仅前端演示，不调用后端）。
+ * 从接口错误中提取可读提示。
+ *
+ * @param error 捕获到的错误
  */
-function onSubmit(event: Event) {
+function resolveErrorMessage(error: unknown): string {
+  if (isAxiosError(error)) {
+    const payload = error.response?.data as ApiResult | undefined
+    if (payload?.message) return payload.message
+    if (error.message) return error.message
+  }
+  if (error instanceof Error && error.message) return error.message
+  return '登录失败，请稍后重试'
+}
+
+/**
+ * 提交手机号 + 密码登录。
+ */
+async function onSubmit(event: Event) {
   event.preventDefault()
-  if (!captchaPassed.value) return
+  if (!captchaPassed.value || loading.value) return
 
-  // 页面演示：写入本地 accessToken，后续再对接真实鉴权
-  setAccessToken(`demo-token-${username.value}`)
+  errorMessage.value = ''
+  loading.value = true
 
-  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
-  void router.replace(redirect)
+  try {
+    const { data: result } = await loginByPhone({
+      phone: phone.value.trim(),
+      password: password.value,
+    })
+
+    if (!result.success || !result.data?.accessToken) {
+      errorMessage.value = result.message || '登录失败，请稍后重试'
+      return
+    }
+
+    userStore.setSession(result.data.accessToken, {
+      ...result.data.user,
+      phone: phone.value.trim(),
+    })
+
+    if (remember.value) {
+      localStorage.setItem(REMEMBERED_PHONE_KEY, phone.value.trim())
+    } else {
+      localStorage.removeItem(REMEMBERED_PHONE_KEY)
+    }
+
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
+    await router.replace(redirect)
+  } catch (error) {
+    errorMessage.value = resolveErrorMessage(error)
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -136,12 +186,13 @@ onMounted(() => {
 
           <form class="flex flex-col gap-4" @submit="onSubmit">
             <Input
-              v-model="username"
-              type="text"
-              autocomplete="username"
-              placeholder="用户名"
+              v-model="phone"
+              type="tel"
+              autocomplete="tel"
+              placeholder="手机号"
               class="h-10"
-              aria-label="用户名"
+              aria-label="手机号"
+              maxlength="11"
             />
 
             <div class="relative">
@@ -166,6 +217,10 @@ onMounted(() => {
 
             <SliderCaptcha v-model="captchaPassed" />
 
+            <p v-if="errorMessage" class="text-sm text-red-500" role="alert">
+              {{ errorMessage }}
+            </p>
+
             <div class="flex items-center justify-between gap-3 pt-0.5">
               <label class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
                 <Checkbox v-model:checked="remember" />
@@ -183,9 +238,9 @@ onMounted(() => {
               type="submit"
               size="lg"
               class="mt-1 h-10 w-full bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500"
-              :disabled="!captchaPassed"
+              :disabled="!captchaPassed || loading"
             >
-              登录
+              {{ loading ? '登录中...' : '登录' }}
             </Button>
           </form>
         </div>

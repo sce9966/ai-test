@@ -17,7 +17,7 @@ describe('AppController', () => {
   describe('getHello', () => {
     it('应返回基线探活消息', () => {
       expect(appController.getHello()).toEqual({
-        message: 'admin-template api is running',
+        message: 'openkey api is running',
       });
     });
   });

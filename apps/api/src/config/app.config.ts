@@ -6,4 +6,7 @@ import { registerAs } from '@nestjs/config';
 export default registerAs('app', () => ({
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: parseInt(process.env.PORT ?? '3000', 10),
+  apiPrefix: process.env.APIPREFIX || '/api',
+  swaggerPrefix: process.env.SWAGGERPREFIX || '/docs',
+  namespace: process.env.NAMESPACE || 'openkey',
 }));
