@@ -8,6 +8,7 @@ import { ResultInterceptor } from './common/interceptors/result.interceptor';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
+import wechatMiniConfig from './config/wechat-mini.config';
 import redisConfig from './config/redis.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { GiftCodeModule } from './modules/gift-code/gift-code.module';
@@ -15,16 +16,17 @@ import { OrderModule } from './modules/order/order.module';
 import { RedisCacheModule } from './modules/redisCache/redisCache.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { VirtualGoodsModule } from './modules/virtual-goods/virtual-goods.module';
+import { WechatMiniModule } from './modules/wechat-mini/wechat-mini.module';
 
 /**
- * 根模块：配置、数据库、Redis，以及鉴权、上传与业务实体模块。
+ * 根模块：配置、数据库、Redis，以及鉴权、上传、业务实体与微信小程序模块。
  */
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [appConfig, databaseConfig, redisConfig],
+      load: [appConfig, databaseConfig, redisConfig, wechatMiniConfig],
       validationSchema: envValidationSchema,
       validationOptions: {
         abortEarly: false,
@@ -54,6 +56,7 @@ import { VirtualGoodsModule } from './modules/virtual-goods/virtual-goods.module
     VirtualGoodsModule,
     GiftCodeModule,
     OrderModule,
+    WechatMiniModule,
   ],
   controllers: [AppController],
   providers: [

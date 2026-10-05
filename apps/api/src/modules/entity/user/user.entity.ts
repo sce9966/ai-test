@@ -84,8 +84,15 @@ export class User extends BaseEntity {
    * 微信 openId。
    */
   @ApiProperty({ description: '微信openId', required: false })
-  @Column({ length: 64, default: '', comment: '微信openId', nullable: true })
+  @Column({ type: 'varchar', length: 64, default: '', comment: '微信openId', nullable: true })
   openId?: string;
+
+  /**
+   * 微信 unionId。
+   */
+  @ApiProperty({ description: '微信unionId', required: false })
+  @Column({ type: 'varchar', length: 64, nullable: true, default: '', comment: '微信unionId' })
+  unionId?: string;
 
   /**
    * 注册来源。

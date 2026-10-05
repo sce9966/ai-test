@@ -33,4 +33,7 @@ export const envValidationSchema = Joi.object({
   COS_SECRET_ID: Joi.string().allow('').optional(),
   COS_SECRET_KEY: Joi.string().allow('').optional(),
   COS_ACCELERATED_DOMAIN: Joi.string().allow('').optional(),
+
+  WECHAT_MINI_APPID: Joi.string().allow('').optional(),
+  WECHAT_MINI_SECRET: Joi.string().allow('').optional(),
 });
