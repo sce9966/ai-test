@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryGeneratedColumn,
@@ -7,7 +8,7 @@ import {
 } from 'typeorm';
 
 /**
- * 实体基类：主键与时间戳字段。
+ * 实体基类：主键、时间戳与审计人字段。
  */
 export abstract class BaseEntity {
   /**
@@ -16,6 +17,20 @@ export abstract class BaseEntity {
   @ApiProperty({ description: '主键ID' })
   @PrimaryGeneratedColumn()
   id!: number;
+
+  /**
+   * 创建人用户 ID。
+   */
+  @ApiProperty({ description: '创建人用户ID', required: false })
+  @Column({ type: 'int', nullable: true, comment: '创建人用户ID' })
+  createdBy?: number | null;
+
+  /**
+   * 更新人用户 ID。
+   */
+  @ApiProperty({ description: '更新人用户ID', required: false })
+  @Column({ type: 'int', nullable: true, comment: '更新人用户ID' })
+  updatedBy?: number | null;
 
   /**
    * 创建时间。

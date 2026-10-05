@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import {
   ClipboardListIcon,
   CreditCardIcon,
+  CrownIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
   PackageIcon,
@@ -45,12 +46,30 @@ export const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: 'member',
+        name: 'member',
+        component: () => import('../views/member/MemberView.vue'),
+        meta: {
+          title: '会员管理',
+          icon: CrownIcon,
+        },
+      },
+      {
         path: 'product',
         name: 'product',
         component: () => import('../views/product/ProductView.vue'),
         meta: {
           title: '商品管理',
           icon: PackageIcon,
+        },
+      },
+      {
+        path: 'gift-code',
+        name: 'gift-code',
+        component: () => import('../views/gift-code/GiftCodeView.vue'),
+        meta: {
+          title: '兑换码管理',
+          icon: KeyRoundIcon,
         },
       },
       {
@@ -74,10 +93,9 @@ export const routes: RouteRecordRaw[] = [
       {
         path: 'card-key',
         name: 'card-key',
-        component: () => import('../views/card-key/CardKeyView.vue'),
+        redirect: '/gift-code',
         meta: {
-          title: '卡密管理',
-          icon: KeyRoundIcon,
+          hideInMenu: true,
         },
       },
       {

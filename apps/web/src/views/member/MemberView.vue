@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import ImportGiftCodeDialog from '@/components/virtual-goods/ImportGiftCodeDialog.vue'
+import GiftCodeListDialog from '@/components/virtual-goods/GiftCodeListDialog.vue'
 import VirtualGoodsFormDialog from '@/components/virtual-goods/VirtualGoodsFormDialog.vue'
 import { formatDateTime, shelfStatusLabel } from '@/utils/labels'
 
@@ -30,17 +30,17 @@ const status = ref<string>('all')
 const formOpen = ref(false)
 const formMode = ref<'create' | 'edit' | 'detail'>('create')
 const current = ref<VirtualGoods | null>(null)
-const importOpen = ref(false)
+const codeOpen = ref(false)
 
 /**
- * 加载课程商品列表。
+ * 加载会员列表。
  */
 async function loadList() {
   loading.value = true
   errorMessage.value = ''
   try {
     const result = await fetchVirtualGoodsList({
-      kind: 'course',
+      kind: 'member',
       page: page.value,
       pageSize,
       name: name.value.trim() || undefined,
@@ -86,12 +86,12 @@ function onOpenForm(item: VirtualGoods, mode: 'edit' | 'detail') {
 }
 
 /**
- * 删除课程商品。
+ * 删除会员商品。
  *
  * @param item 行数据
  */
 async function onDelete(item: VirtualGoods) {
-  if (!window.confirm(`确认删除课程「${item.name}」？`)) {
+  if (!window.confirm(`确认删除会员「${item.name}」？`)) {
     return
   }
   try {
@@ -103,13 +103,13 @@ async function onDelete(item: VirtualGoods) {
 }
 
 /**
- * 打开批量导入兑换码。
+ * 查看兑换码列表。
  *
  * @param item 行数据
  */
-function onImport(item: VirtualGoods) {
+function onViewCodes(item: VirtualGoods) {
   current.value = item
-  importOpen.value = true
+  codeOpen.value = true
 }
 
 /**
@@ -131,11 +131,11 @@ onMounted(() => {
   <div class="space-y-4">
     <div class="flex flex-wrap items-end gap-3">
       <div class="grid gap-1.5">
-        <span class="text-xs text-muted-foreground">课程ID</span>
+        <span class="text-xs text-muted-foreground">商品ID</span>
         <Input v-model="goodsId" class="w-48" placeholder="精确匹配" />
       </div>
       <div class="grid gap-1.5">
-        <span class="text-xs text-muted-foreground">课程名称</span>
+        <span class="text-xs text-muted-foreground">会员名称</span>
         <Input v-model="name" class="w-40" placeholder="模糊查询" />
       </div>
       <div class="grid gap-1.5">
@@ -160,12 +160,11 @@ onMounted(() => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>课程ID</TableHead>
-          <TableHead>课程名称</TableHead>
+          <TableHead>商品ID</TableHead>
+          <TableHead>会员名称</TableHead>
           <TableHead>单价</TableHead>
           <TableHead>划线价</TableHead>
-          <TableHead>副标题</TableHead>
-          <TableHead>排序</TableHead>
+          <TableHead>时长</TableHead>
           <TableHead>状态</TableHead>
           <TableHead>创建人</TableHead>
           <TableHead>创建时间</TableHead>
@@ -176,15 +175,14 @@ onMounted(() => {
       </TableHeader>
       <TableBody>
         <TableRow v-if="!loading && rows.length === 0">
-          <TableCell colspan="12" class="text-center text-muted-foreground">暂无数据</TableCell>
+          <TableCell colspan="11" class="text-center text-muted-foreground">暂无数据</TableCell>
         </TableRow>
         <TableRow v-for="item in rows" :key="item.id">
           <TableCell>{{ item.goodsId }}</TableCell>
           <TableCell>{{ item.name }}</TableCell>
           <TableCell>{{ item.price }}</TableCell>
           <TableCell>{{ item.linePrice }}</TableCell>
-          <TableCell>{{ item.subtitle || '-' }}</TableCell>
-          <TableCell>{{ item.sort ?? 0 }}</TableCell>
+          <TableCell>{{ item.durationDays }}天</TableCell>
           <TableCell>{{ shelfStatusLabel(item.status) }}</TableCell>
           <TableCell>{{ item.createdByName || '-' }}</TableCell>
           <TableCell>{{ formatDateTime(item.createdAt) }}</TableCell>
@@ -194,7 +192,7 @@ onMounted(() => {
             <div class="flex flex-wrap gap-1">
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'detail')">详情</Button>
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'edit')">编辑</Button>
-              <Button size="xs" variant="ghost" @click="onImport(item)">导入兑换码</Button>
+              <Button size="xs" variant="ghost" @click="onViewCodes(item)">兑换码</Button>
               <Button size="xs" variant="destructive" @click="onDelete(item)">删除</Button>
             </div>
           </TableCell>
@@ -211,17 +209,17 @@ onMounted(() => {
 
     <VirtualGoodsFormDialog
       :open="formOpen"
-      kind="course"
+      kind="member"
       :mode="formMode"
       :goods="current"
       @update:open="formOpen = $event"
       @saved="loadList"
     />
-    <ImportGiftCodeDialog
-      :open="importOpen"
+    <GiftCodeListDialog
+      :open="codeOpen"
       :goods-id="current?.goodsId"
       :goods-name="current?.name"
-      @update:open="importOpen = $event"
+      @update:open="codeOpen = $event"
     />
   </div>
 </template>

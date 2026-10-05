@@ -1,8 +1,10 @@
-import axios from 'axios'
-import { getAccessToken } from '@/utils/auth'
+import axios, { isAxiosError } from 'axios'
+import type { AxiosResponse } from 'axios'
+import { clearAccessToken, getAccessToken } from '@/utils/auth'
+import type { ApiResult } from './types'
 
 /**
- * 统一 axios 实例（占位）：后续业务 API 模块应复用此客户端，勿在页面内散落 axios 调用。
+ * 统一 axios 实例。
  */
 export const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -23,7 +25,46 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 错误归一占位：后续可接入统一 toast / 错误码映射
+    if (isAxiosError(error) && error.response?.status === 401) {
+      clearAccessToken()
+      if (!window.location.hash.includes('/login')) {
+        window.location.hash = '#/login'
+      }
+    }
     return Promise.reject(error)
   },
 )
+
+/**
+ * 解包后端统一响应。
+ *
+ * @param promise axios 请求
+ */
+export async function unwrap<T>(promise: Promise<AxiosResponse<ApiResult<T>>>): Promise<T> {
+  const { data } = await promise
+  if (!data.success) {
+    throw new Error(data.message || '请求失败')
+  }
+  return data.data as T
+}
+
+/**
+ * 从接口错误中提取可读提示。
+ *
+ * @param error 捕获到的错误
+ */
+export function getApiErrorMessage(error: unknown): string {
+  if (isAxiosError(error)) {
+    const payload = error.response?.data as ApiResult | undefined
+    if (payload?.message) {
+      return payload.message
+    }
+    if (error.message) {
+      return error.message
+    }
+  }
+  if (error instanceof Error && error.message) {
+    return error.message
+  }
+  return '请求失败'
+}
