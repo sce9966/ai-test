@@ -11,11 +11,10 @@ import { envValidationSchema } from './config/env.validation';
 import redisConfig from './config/redis.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisCacheModule } from './modules/redisCache/redisCache.module';
-import { SkuModule } from './modules/sku/sku.module';
 import { UploadModule } from './modules/upload/upload.module';
 
 /**
- * 根模块：配置、数据库、Redis，以及 auth / upload / sku 业务模块。
+ * 根模块：配置、数据库、Redis，以及 auth / upload 业务模块。
  */
 @Module({
   imports: [
@@ -49,7 +48,6 @@ import { UploadModule } from './modules/upload/upload.module';
     RedisCacheModule,
     AuthModule,
     UploadModule,
-    SkuModule,
   ],
   controllers: [AppController],
   providers: [

@@ -11,14 +11,4 @@ export namespace Status {
     /** 禁用 */
     Disable = 0,
   }
-
-  /**
-   * 商品 SKU 上下架状态。
-   */
-  export enum SkuShelfStatus {
-    /** 下架 */
-    Off = 0,
-    /** 上架 */
-    On = 1,
-  }
 }
