@@ -10,10 +10,11 @@ import { VirtualGoods } from '../entity/virtual-goods/virtual-goods.entity';
 import { ImportGiftCodeDto, QueryGiftCodeDto } from './dto/gift-code.dto';
 
 /**
- * 兑换码列表行（含商品名称）。
+ * 兑换码列表行（含商品名称与类型）。
  */
 export type GiftCodeListItem = WithAuditorNames<GiftCode> & {
   goodsName?: string | null;
+  goodsKind?: Status.VirtualGoodsKind | null;
 };
 
 /**
@@ -45,6 +46,26 @@ export class GiftCodeService {
    */
   private normalizeCodes(codes: string[]): string[] {
     return codes.map((code) => code.trim()).filter((code) => code.length > 0);
+  }
+
+  /**
+   * 从 TypeORM raw 行中读取联表字段。
+   *
+   * @param rawRow 原始行
+   * @param aliases 字段别名
+   */
+  private pickRawField(rawRow: Record<string, unknown>, aliases: string[]): string | null {
+    const normalize = (value: string) => value.replace(/_/g, '').toLowerCase();
+    const wanted = aliases.map(normalize);
+    for (const [key, value] of Object.entries(rawRow)) {
+      const normalizedKey = normalize(key);
+      if (wanted.some((alias) => normalizedKey === alias || normalizedKey.endsWith(alias))) {
+        if (value != null && value !== '') {
+          return String(value);
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -143,6 +164,7 @@ export class GiftCodeService {
     const { entities, raw } = await qb
       .clone()
       .addSelect('goods.name', 'goodsName')
+      .addSelect('goods.kind', 'goodsKind')
       .orderBy('gift.createdAt', 'DESC')
       .skip((page - 1) * pageSize)
       .take(pageSize)
@@ -150,13 +172,12 @@ export class GiftCodeService {
     const withNames = await attachAuditorNames(this.userRepository, entities);
     const rows = withNames.map((row, index) => {
       const rawRow = (raw[index] ?? {}) as Record<string, unknown>;
-      const goodsName =
-        (rawRow.goodsName as string | undefined) ??
-        (Object.entries(rawRow).find(([key]) => key.toLowerCase().endsWith('goodsname'))?.[1] as
-          | string
-          | undefined) ??
-        null;
-      return { ...row, goodsName };
+      const goodsKind = this.pickRawField(rawRow, ['goodsKind']) as Status.VirtualGoodsKind | null;
+      return {
+        ...row,
+        goodsName: this.pickRawField(rawRow, ['goodsName']),
+        goodsKind,
+      };
     });
 
     return { rows, total, page, pageSize };
@@ -174,7 +195,11 @@ export class GiftCodeService {
     }
     const goods = await this.goodsRepository.findOne({ where: { goodsId: gift.goodsId } });
     const [row] = await attachAuditorNames(this.userRepository, [gift]);
-    return { ...row, goodsName: goods?.name ?? null };
+    return {
+      ...row,
+      goodsName: goods?.name ?? null,
+      goodsKind: goods?.kind ?? null,
+    };
   }
 
   /**

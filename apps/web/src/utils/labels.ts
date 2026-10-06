@@ -25,6 +25,21 @@ export function shelfStatusLabel(status: number): string {
 }
 
 /**
+ * 虚拟商品类型文案。
+ *
+ * @param kind 类型
+ */
+export function virtualGoodsKindLabel(kind?: string | null): string {
+  if (kind === 'member') {
+    return '会员'
+  }
+  if (kind === 'course') {
+    return '课程'
+  }
+  return '-'
+}
+
+/**
  * 兑换码状态文案。
  *
  * @param status 状态值

@@ -1,5 +1,6 @@
 import { http, unwrap } from './http'
 import type { AuditorFields, PaginatedResult } from './types'
+import type { VirtualGoodsKind } from './virtual-goods'
 
 /** 兑换码状态。 */
 export const GiftCodeStatus = {
@@ -18,6 +19,7 @@ export interface GiftCode extends AuditorFields {
   status: number
   orderNo?: string | null
   goodsName?: string | null
+  goodsKind?: VirtualGoodsKind | null
 }
 
 /**

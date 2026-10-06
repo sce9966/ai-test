@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { formatDateTime, giftCodeStatusLabel } from '@/utils/labels'
+import { formatDateTime, giftCodeStatusLabel, virtualGoodsKindLabel } from '@/utils/labels'
 
 const loading = ref(false)
 const errorMessage = ref('')
@@ -152,6 +152,7 @@ onMounted(() => {
       <TableHeader>
         <TableRow>
           <TableHead>兑换码</TableHead>
+          <TableHead>商品类型</TableHead>
           <TableHead>商品名称</TableHead>
           <TableHead>订单号</TableHead>
           <TableHead>状态</TableHead>
@@ -160,10 +161,11 @@ onMounted(() => {
       </TableHeader>
       <TableBody>
         <TableRow v-if="!loading && rows.length === 0">
-          <TableCell colspan="5" class="text-center text-muted-foreground">暂无数据</TableCell>
+          <TableCell colspan="6" class="text-center text-muted-foreground">暂无数据</TableCell>
         </TableRow>
         <TableRow v-for="item in rows" :key="item.id">
           <TableCell>{{ item.code }}</TableCell>
+          <TableCell>{{ virtualGoodsKindLabel(item.goodsKind) }}</TableCell>
           <TableCell>{{ item.goodsName || '-' }}</TableCell>
           <TableCell>{{ item.orderNo || '-' }}</TableCell>
           <TableCell>{{ giftCodeStatusLabel(item.status) }}</TableCell>
@@ -199,6 +201,7 @@ onMounted(() => {
         <div v-if="detail" class="grid gap-2 text-sm">
           <p>兑换码：{{ detail.code }}</p>
           <p>商品ID：{{ detail.goodsId }}</p>
+          <p>商品类型：{{ virtualGoodsKindLabel(detail.goodsKind) }}</p>
           <p>商品名称：{{ detail.goodsName || '-' }}</p>
           <p>订单号：{{ detail.orderNo || '-' }}</p>
           <p>状态：{{ giftCodeStatusLabel(detail.status) }}</p>
