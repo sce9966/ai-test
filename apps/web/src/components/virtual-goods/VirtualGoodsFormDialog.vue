@@ -22,11 +22,13 @@ import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { ImageUploader } from '@/components/image-uploader'
 
 const props = defineProps<{
   open: boolean
@@ -112,17 +114,12 @@ function close() {
 }
 
 /**
- * 上传封面。
+ * 将裁剪后的封面上传到服务器。
  *
- * @param event 文件选择事件
+ * @param blob 裁剪结果
  */
-async function onUploadCover(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  input.value = ''
-  if (!file) {
-    return
-  }
+async function onCoverCropped(blob: Blob) {
+  const file = new File([blob], `cover-${Date.now()}.jpg`, { type: blob.type || 'image/jpeg' })
   uploading.value = true
   errorMessage.value = ''
   try {
@@ -266,26 +263,35 @@ async function onSubmit() {
         <div class="grid gap-1.5">
           <Label>封面</Label>
           <div class="flex flex-wrap gap-2">
-            <img
+            <button
               v-for="(url, index) in form.coverUrls"
               :key="url + index"
-              :src="url"
-              class="h-16 w-16 rounded-md border object-cover"
-              alt="封面"
+              type="button"
+              class="relative"
+              :disabled="readonly"
               @click="!readonly && removeCover(index)"
-            />
+            >
+              <img :src="url" class="h-16 w-16 rounded-md border object-cover" alt="封面" />
+            </button>
           </div>
-          <div v-if="!readonly" class="flex items-center gap-2">
-            <Input type="file" accept="image/*" :disabled="uploading" @change="onUploadCover" />
-            <span class="text-xs text-muted-foreground">点击已上传封面可移除</span>
-          </div>
+          <ImageUploader
+            v-if="!readonly"
+            compact
+            clear-after-crop
+            title="上传封面"
+            :disabled="uploading"
+            @image-cropped="onCoverCropped"
+          />
+          <span v-if="!readonly" class="text-xs text-muted-foreground">
+            {{ uploading ? '封面上传中...' : '点击已上传封面可移除' }}
+          </span>
         </div>
         <p v-if="errorMessage" class="text-sm text-destructive">{{ errorMessage }}</p>
       </div>
 
       <DialogFooter>
         <Button variant="outline" @click="close">关闭</Button>
-        <Button v-if="!readonly" :disabled="submitting" @click="onSubmit">
+        <Button v-if="!readonly" :disabled="submitting || uploading" @click="onSubmit">
           {{ submitting ? '保存中...' : '保存' }}
         </Button>
       </DialogFooter>

@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createRandomUid } from '../../common/utils/createRandomUid';
 import { removeSpecialCharacters } from '../../common/utils/removeSpecialCharacters';
-import { tenantCosConfig } from '../../config/tenantCosConfig';
+import type { TenantCosConfig } from '../../config/tenantCosConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const COS = require('cos-nodejs-sdk-v5') as new (options: {
@@ -43,15 +44,10 @@ type CosClient = InstanceType<typeof COS>;
  * 文件上传服务（腾讯云 COS）。
  */
 @Injectable()
-export class UploadService implements OnModuleInit {
+export class UploadService {
   private tencentCos: CosClient | null = null;
 
-  /**
-   * 模块初始化钩子。
-   */
-  onModuleInit(): void {
-    // lazy init on first upload
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   /**
    * 上传文件入口。
@@ -100,7 +96,8 @@ export class UploadService implements OnModuleInit {
     size?: number;
   }): Promise<UploadFileResult> {
     const { filename, buffer, dir, fileType, size } = params;
-    const { cosBucket, cosRegion, cosSecretId, cosSecretKey } = await this.getUploadConfig();
+    const { cosBucket, cosRegion, cosSecretId, cosSecretKey, tencentCosAcceleratedDomain } =
+      this.getUploadConfig();
 
     this.tencentCos = new COS({
       SecretId: cosSecretId,
@@ -119,10 +116,10 @@ export class UploadService implements OnModuleInit {
             Bucket: removeSpecialCharacters(cosBucket),
             Region: removeSpecialCharacters(cosRegion),
             Key: `${dir}/${filename || `${createRandomUid()}.${fileType}`}`,
-            StorageClass: 'STANDARD',
+            // StorageClass: 'STANDARD',
             Body: buffer,
           },
-          async (err, data) => {
+          (err, data) => {
             if (err) {
               reject(err);
               return;
@@ -131,7 +128,6 @@ export class UploadService implements OnModuleInit {
               /^(http:\/\/|https:\/\/|\/\/|)(.*)/,
               'https://$2',
             );
-            const { tencentCosAcceleratedDomain } = await this.getUploadConfig();
             if (tencentCosAcceleratedDomain) {
               locationUrl = locationUrl.replace(
                 /^(https:\/\/[^/]+)(\/.*)$/,
@@ -154,14 +150,24 @@ export class UploadService implements OnModuleInit {
   }
 
   /**
-   * 读取并校验 COS 配置。
+   * 读取并校验腾讯云 COS 配置。
    */
-  async getUploadConfig(): Promise<typeof tenantCosConfig> {
-    const { cosBucket, cosRegion, cosSecretId, cosSecretKey, tencentCosAcceleratedDomain } =
-      tenantCosConfig;
-    if (!cosBucket || !cosRegion || !cosSecretId || !cosSecretKey) {
+  getUploadConfig(): TenantCosConfig {
+    const config = this.configService.get<TenantCosConfig>('tenantCos');
+    if (
+      !config?.cosBucket ||
+      !config.cosRegion ||
+      !config.cosSecretId ||
+      !config.cosSecretKey
+    ) {
       throw new HttpException('请配置正确的腾讯COS上传配置！', HttpStatus.BAD_REQUEST);
     }
-    return { cosBucket, cosRegion, cosSecretId, cosSecretKey, tencentCosAcceleratedDomain };
+    return {
+      cosBucket: config.cosBucket,
+      cosRegion: config.cosRegion,
+      cosSecretId: config.cosSecretId,
+      cosSecretKey: config.cosSecretKey,
+      tencentCosAcceleratedDomain: config.tencentCosAcceleratedDomain || '',
+    };
   }
 }

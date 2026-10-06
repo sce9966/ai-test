@@ -10,6 +10,7 @@ import databaseConfig from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
 import wechatMiniConfig from './config/wechat-mini.config';
 import redisConfig from './config/redis.config';
+import tenantCosConfig from './config/tenantCosConfig';
 import { AuthModule } from './modules/auth/auth.module';
 import { GiftCodeModule } from './modules/gift-code/gift-code.module';
 import { OrderModule } from './modules/order/order.module';
@@ -26,7 +27,7 @@ import { WechatMiniModule } from './modules/wechat-mini/wechat-mini.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [appConfig, databaseConfig, redisConfig, wechatMiniConfig],
+      load: [appConfig, databaseConfig, redisConfig, wechatMiniConfig, tenantCosConfig],
       validationSchema: envValidationSchema,
       validationOptions: {
         abortEarly: false,
