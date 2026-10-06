@@ -9,6 +9,7 @@ import { GiftCode } from '../entity/gift-code/gift-code.entity';
 import { Order } from '../entity/order/order.entity';
 import { User } from '../entity/user/user.entity';
 import { VirtualGoods } from '../entity/virtual-goods/virtual-goods.entity';
+import { XpayGoodsService } from '../xpay/xpay-goods.service';
 import {
   CreateVirtualGoodsDto,
   QueryVirtualGoodsDto,
@@ -29,6 +30,7 @@ export class VirtualGoodsService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly xpayGoodsService: XpayGoodsService,
   ) {}
 
   /**
@@ -68,7 +70,8 @@ export class VirtualGoodsService {
       createdBy: userId,
       updatedBy: userId,
     });
-    return this.goodsRepository.save(goods);
+    const saved = await this.goodsRepository.save(goods);
+    return this.xpayGoodsService.syncGoods(saved);
   }
 
   /**
@@ -168,7 +171,16 @@ export class VirtualGoodsService {
       goods.groupName = dto.groupName;
     }
     goods.updatedBy = userId;
-    return this.goodsRepository.save(goods);
+    const saved = await this.goodsRepository.save(goods);
+    const shouldSync =
+      dto.name !== undefined ||
+      dto.price !== undefined ||
+      dto.remark !== undefined ||
+      dto.coverUrls !== undefined;
+    if (shouldSync) {
+      return this.xpayGoodsService.syncGoods(saved);
+    }
+    return saved;
   }
 
   /**

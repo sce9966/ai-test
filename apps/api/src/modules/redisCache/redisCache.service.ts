@@ -58,6 +58,19 @@ export class RedisCacheService implements OnModuleInit {
   }
 
   /**
+   * 仅当 key 不存在时写入并设置过期（分布式锁）。
+   *
+   * @param key Redis key
+   * @param val 值
+   * @param ttlSeconds 过期秒数
+   * @returns 是否抢到锁
+   */
+  async setNx(key: string, val: string, ttlSeconds: number): Promise<boolean> {
+    const result = await this.redisClient.set(key, val, { NX: true, EX: ttlSeconds });
+    return result === 'OK';
+  }
+
+  /**
    * 删除缓存。
    *
    * @param body 包含 key 的对象

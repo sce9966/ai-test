@@ -36,4 +36,12 @@ export const envValidationSchema = Joi.object({
 
   WECHAT_MINI_APPID: Joi.string().allow('').optional(),
   WECHAT_MINI_SECRET: Joi.string().allow('').optional(),
+
+  WECHAT_XPAY_ENABLED: Joi.string().valid('true', 'false').optional(),
+  WECHAT_XPAY_OFFER_ID: Joi.string().allow('').optional(),
+  WECHAT_XPAY_APPKEY: Joi.string().allow('').optional(),
+  WECHAT_XPAY_SANDBOX_APPKEY: Joi.string().allow('').optional(),
+  WECHAT_XPAY_ENV: Joi.string().valid('0', '1').optional(),
+  WECHAT_XPAY_TOKEN: Joi.string().allow('').optional(),
+  WECHAT_XPAY_AES_KEY: Joi.string().allow('').optional(),
 });

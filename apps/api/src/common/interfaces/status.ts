@@ -54,6 +54,8 @@ export namespace Status {
     Success = 1,
     /** 支付失败 */
     Failed = 2,
+    /** 已退款 */
+    Refunded = 3,
   }
 
   /**
@@ -64,5 +66,29 @@ export namespace Status {
     Normal = 0,
     /** 完结 */
     Finished = 1,
+  }
+
+  /**
+   * 订单发货状态。
+   */
+  export enum DeliverStatus {
+    /** 待发货 */
+    Pending = 0,
+    /** 已发货 */
+    Delivered = 1,
+  }
+
+  /**
+   * 虚拟支付道具同步状态。
+   */
+  export enum XpayGoodsSyncStatus {
+    /** 未同步 */
+    None = 0,
+    /** 已上传开发版 */
+    Uploaded = 1,
+    /** 已发布现网 */
+    Published = 2,
+    /** 同步失败 */
+    Failed = 3,
   }
 }

@@ -1,6 +1,8 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SKIP_RESULT_KEY } from '../decorators/skipResult.decorator';
 import { Result } from '../result';
 
 /**
@@ -8,11 +10,20 @@ import { Result } from '../result';
  */
 @Injectable()
 export class ResultInterceptor implements NestInterceptor {
+  constructor(private readonly reflector: Reflector) {}
+
   /**
-   * @param _context 执行上下文
+   * @param context 执行上下文
    * @param next 下游处理器
    */
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<unknown> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const skip = this.reflector.getAllAndOverride<boolean>(SKIP_RESULT_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (skip) {
+      return next.handle();
+    }
     return next.handle().pipe(
       map((data: unknown) => {
         if (data instanceof Result) {

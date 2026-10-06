@@ -27,6 +27,8 @@ export interface VirtualGoods extends AuditorFields {
   subtitle?: string | null
   sort?: number | null
   groupName?: string | null
+  xpaySyncStatus?: number
+  xpaySyncMessage?: string | null
 }
 
 /**
@@ -82,7 +84,7 @@ export function fetchVirtualGoods(id: number) {
  * @param payload 创建参数
  */
 export function createVirtualGoods(payload: VirtualGoodsPayload) {
-  return unwrap<VirtualGoods>(http.post('/virtual-goods', payload))
+  return unwrap<VirtualGoods>(http.post('/virtual-goods', payload, { timeout: 120000 }))
 }
 
 /**
@@ -92,7 +94,7 @@ export function createVirtualGoods(payload: VirtualGoodsPayload) {
  * @param payload 更新参数
  */
 export function updateVirtualGoods(id: number, payload: Omit<VirtualGoodsPayload, 'kind'>) {
-  return unwrap<VirtualGoods>(http.put(`/virtual-goods/${id}`, payload))
+  return unwrap<VirtualGoods>(http.put(`/virtual-goods/${id}`, payload, { timeout: 120000 }))
 }
 
 /**

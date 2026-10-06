@@ -66,7 +66,28 @@ export function payStatusLabel(status: number): string {
   if (status === 2) {
     return '支付失败'
   }
+  if (status === 3) {
+    return '已退款'
+  }
   return '未支付'
+}
+
+/**
+ * 虚拟支付道具同步状态。
+ *
+ * @param status 状态值
+ */
+export function xpaySyncStatusLabel(status?: number | null): string {
+  if (status === 1) {
+    return '已上传'
+  }
+  if (status === 2) {
+    return '已发布'
+  }
+  if (status === 3) {
+    return '同步失败'
+  }
+  return '未同步'
 }
 
 /**

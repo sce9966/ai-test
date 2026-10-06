@@ -1,6 +1,7 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/allExceptions.filter';
 import { TypeOrmQueryFailedFilter } from './common/filters/typeOrmQueryFailed.filter';
@@ -11,7 +12,8 @@ import { APIPREFIX, NAMESPACE, PORT } from './config/main';
  * 应用入口：创建 Nest 实例，挂载全局管道 / 过滤器 / Swagger 并监听端口。
  */
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
+  app.useBodyParser('text', { type: ['text/xml', 'application/xml'] });
   const configService = app.get(ConfigService);
   const port = configService.get<number>('app.port', PORT);
   const nodeEnv = configService.get<string>('app.nodeEnv', 'development');

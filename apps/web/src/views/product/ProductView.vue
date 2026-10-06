@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import GiftCodeListDialog from '@/components/virtual-goods/GiftCodeListDialog.vue'
 import ImportGiftCodeDialog from '@/components/virtual-goods/ImportGiftCodeDialog.vue'
 import VirtualGoodsFormDialog from '@/components/virtual-goods/VirtualGoodsFormDialog.vue'
-import { formatDateTime, shelfStatusLabel } from '@/utils/labels'
+import { formatDateTime, shelfStatusLabel, xpaySyncStatusLabel } from '@/utils/labels'
 
 const loading = ref(false)
 const errorMessage = ref('')
@@ -179,6 +179,7 @@ onMounted(() => {
           <TableHead>副标题</TableHead>
           <TableHead>排序</TableHead>
           <TableHead>状态</TableHead>
+          <TableHead>道具同步</TableHead>
           <TableHead>创建人</TableHead>
           <TableHead>创建时间</TableHead>
           <TableHead>更新人</TableHead>
@@ -188,7 +189,7 @@ onMounted(() => {
       </TableHeader>
       <TableBody>
         <TableRow v-if="!loading && rows.length === 0">
-          <TableCell colspan="12" class="text-center text-muted-foreground">暂无数据</TableCell>
+          <TableCell colspan="13" class="text-center text-muted-foreground">暂无数据</TableCell>
         </TableRow>
         <TableRow v-for="item in rows" :key="item.id">
           <TableCell>{{ item.goodsId }}</TableCell>
@@ -198,6 +199,7 @@ onMounted(() => {
           <TableCell>{{ item.subtitle || '-' }}</TableCell>
           <TableCell>{{ item.sort ?? 0 }}</TableCell>
           <TableCell>{{ shelfStatusLabel(item.status) }}</TableCell>
+          <TableCell :title="item.xpaySyncMessage || undefined">{{ xpaySyncStatusLabel(item.xpaySyncStatus) }}</TableCell>
           <TableCell>{{ item.createdByName || '-' }}</TableCell>
           <TableCell>{{ formatDateTime(item.createdAt) }}</TableCell>
           <TableCell>{{ item.updatedByName || '-' }}</TableCell>

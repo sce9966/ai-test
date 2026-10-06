@@ -27,6 +27,15 @@ export interface Order extends AuditorFields {
   goodsId: string
   goodsName: string
   amount: string
+  amountFen?: number
+  quantity?: number
+  env?: number
+  platform?: string | null
+  payChannel?: string
+  wxOrderId?: string | null
+  deliverStatus?: number
+  deliveredCode?: string | null
+  refundOrderNo?: string | null
 }
 
 /**
@@ -58,4 +67,17 @@ export function fetchOrderList(params: QueryOrderParams) {
  */
 export function fetchOrder(id: number) {
   return unwrap<Order>(http.get(`/order/${id}`))
+}
+
+/**
+ * 启动虚拟支付退款。
+ *
+ * @param id 订单主键
+ * @param payload 退款参数
+ */
+export function refundOrder(
+  id: number,
+  payload: { refundReason: string; reqFrom: string; refundFeeFen?: number },
+) {
+  return unwrap<Order>(http.post(`/xpay/orders/${id}/refund`, payload, { timeout: 60000 }))
 }

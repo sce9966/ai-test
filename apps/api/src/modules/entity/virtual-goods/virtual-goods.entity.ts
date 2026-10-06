@@ -96,4 +96,22 @@ export class VirtualGoods extends BaseEntity {
   @ApiProperty({ description: '分组', required: false })
   @Column({ type: 'varchar', length: 64, nullable: true, comment: '分组' })
   groupName?: string | null;
+
+  /**
+   * 微信虚拟支付道具同步状态。
+   */
+  @ApiProperty({ description: '虚拟支付道具同步状态' })
+  @Column({
+    type: 'tinyint',
+    default: Status.XpayGoodsSyncStatus.None,
+    comment: '虚拟支付同步 0未同步 1已上传 2已发布 3失败',
+  })
+  xpaySyncStatus!: Status.XpayGoodsSyncStatus;
+
+  /**
+   * 最近一次同步失败原因。
+   */
+  @ApiProperty({ description: '虚拟支付同步信息', required: false })
+  @Column({ type: 'varchar', length: 512, nullable: true, comment: '虚拟支付同步信息' })
+  xpaySyncMessage?: string | null;
 }

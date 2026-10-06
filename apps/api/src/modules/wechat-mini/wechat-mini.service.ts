@@ -147,6 +147,15 @@ export class WechatMiniService {
   }
 
   /**
+   * 对外提供当前用户缓存的 session_key（用于虚拟支付用户态签名）。
+   *
+   * @param openId 用户 openId
+   */
+  async requireSessionKey(openId: string): Promise<string> {
+    return this.getSessionKey(openId);
+  }
+
+  /**
    * 获取稳定版接口调用凭据（供本模块其它微信接口使用）。
    *
    * @param forceRefresh 是否强制刷新

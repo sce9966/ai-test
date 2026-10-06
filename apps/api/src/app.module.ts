@@ -9,8 +9,10 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
 import wechatMiniConfig from './config/wechat-mini.config';
+import wechatXpayConfig from './config/wechat-xpay.config';
 import redisConfig from './config/redis.config';
 import tenantCosConfig from './config/tenantCosConfig';
+import { XpayModule } from './modules/xpay/xpay.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GiftCodeModule } from './modules/gift-code/gift-code.module';
 import { OrderModule } from './modules/order/order.module';
@@ -27,7 +29,7 @@ import { WechatMiniModule } from './modules/wechat-mini/wechat-mini.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      load: [appConfig, databaseConfig, redisConfig, wechatMiniConfig, tenantCosConfig],
+      load: [appConfig, databaseConfig, redisConfig, wechatMiniConfig, wechatXpayConfig, tenantCosConfig],
       validationSchema: envValidationSchema,
       validationOptions: {
         abortEarly: false,
@@ -58,6 +60,7 @@ import { WechatMiniModule } from './modules/wechat-mini/wechat-mini.module';
     GiftCodeModule,
     OrderModule,
     WechatMiniModule,
+    XpayModule,
   ],
   controllers: [AppController],
   providers: [
