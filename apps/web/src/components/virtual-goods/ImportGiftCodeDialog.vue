@@ -29,6 +29,8 @@ const rawText = ref('')
 const submitting = ref(false)
 const message = ref('')
 const isError = ref(false)
+const fileName = ref('')
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 watch(
   () => props.open,
@@ -37,6 +39,10 @@ watch(
       rawText.value = ''
       message.value = ''
       isError.value = false
+      fileName.value = ''
+      if (fileInputRef.value) {
+        fileInputRef.value.value = ''
+      }
     }
   },
 )
@@ -54,7 +60,14 @@ function parseCodes(text: string): string[] {
 }
 
 /**
- * 读取 txt / csv 文件。
+ * 打开系统文件选择框。
+ */
+function onClickUpload() {
+  fileInputRef.value?.click()
+}
+
+/**
+ * 读取所选 txt / csv 文件。
  *
  * @param event 文件选择事件
  */
@@ -65,6 +78,7 @@ function onPickFile(event: Event) {
   if (!file) {
     return
   }
+  fileName.value = file.name
   const reader = new FileReader()
   reader.onload = () => {
     rawText.value = String(reader.result || '')
@@ -122,12 +136,21 @@ async function onSubmit() {
       <div class="grid gap-2">
         <Label>兑换码</Label>
         <Textarea v-model="rawText" class="min-h-40" placeholder="每行一个兑换码" />
-        <input
-          type="file"
-          accept=".txt,.csv,text/plain,text/csv"
-          class="text-sm"
-          @change="onPickFile"
-        >
+        <div class="flex items-center gap-2">
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept=".txt,.csv,text/plain,text/csv"
+            class="hidden"
+            @change="onPickFile"
+          >
+          <Button type="button" variant="outline" size="sm" @click="onClickUpload">
+            上传文件
+          </Button>
+          <span class="truncate text-sm text-muted-foreground">
+            {{ fileName || '支持 txt / csv' }}
+          </span>
+        </div>
         <p
           v-if="message"
           class="text-sm"

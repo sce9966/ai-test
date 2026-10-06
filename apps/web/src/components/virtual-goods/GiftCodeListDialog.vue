@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { fetchGiftCodeList, type GiftCode } from '@/api/gift-code'
+import { fetchGiftCodeList, GiftCodeStatus, voidGiftCode, type GiftCode } from '@/api/gift-code'
 import { getApiErrorMessage } from '@/api/http'
 import { Button } from '@/components/ui/button'
 import {
@@ -77,6 +77,23 @@ function onPageChange(next: number) {
     void loadList()
   }
 }
+
+/**
+ * 作废兑换码。
+ *
+ * @param item 行数据
+ */
+async function onVoid(item: GiftCode) {
+  if (!window.confirm(`确认作废兑换码「${item.code}」？`)) {
+    return
+  }
+  try {
+    await voidGiftCode(item.id)
+    await loadList()
+  } catch (error) {
+    errorMessage.value = getApiErrorMessage(error)
+  }
+}
 </script>
 
 <template>
@@ -96,17 +113,28 @@ function onPageChange(next: number) {
             <TableHead>订单号</TableHead>
             <TableHead>状态</TableHead>
             <TableHead>创建时间</TableHead>
+            <TableHead>操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow v-if="!loading && rows.length === 0">
-            <TableCell colspan="4" class="text-center text-muted-foreground">暂无数据</TableCell>
+            <TableCell colspan="5" class="text-center text-muted-foreground">暂无数据</TableCell>
           </TableRow>
           <TableRow v-for="item in rows" :key="item.id">
             <TableCell>{{ item.code }}</TableCell>
             <TableCell>{{ item.orderNo || '-' }}</TableCell>
             <TableCell>{{ giftCodeStatusLabel(item.status) }}</TableCell>
             <TableCell>{{ formatDateTime(item.createdAt) }}</TableCell>
+            <TableCell>
+              <Button
+                size="xs"
+                variant="destructive"
+                :disabled="item.status === GiftCodeStatus.Voided"
+                @click="onVoid(item)"
+              >
+                作废
+              </Button>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

@@ -7,8 +7,6 @@ import { Input } from '@/components/ui/input'
 import PaginationBar from '@/components/ui/pagination/PaginationBar.vue'
 import {
   Select,
-  SelectGroup,
-  SelectLabel,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -16,6 +14,7 @@ import {
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import GiftCodeListDialog from '@/components/virtual-goods/GiftCodeListDialog.vue'
+import ImportGiftCodeDialog from '@/components/virtual-goods/ImportGiftCodeDialog.vue'
 import VirtualGoodsFormDialog from '@/components/virtual-goods/VirtualGoodsFormDialog.vue'
 import { formatDateTime, shelfStatusLabel } from '@/utils/labels'
 
@@ -27,11 +26,12 @@ const pageSize = 20
 const total = ref(0)
 const name = ref('')
 const goodsId = ref('')
-const status = ref<string>('')
+const status = ref<string>('all')
 
 const formOpen = ref(false)
 const formMode = ref<'create' | 'edit' | 'detail'>('create')
 const current = ref<VirtualGoods | null>(null)
+const importOpen = ref(false)
 const codeOpen = ref(false)
 
 /**
@@ -47,7 +47,7 @@ async function loadList() {
       pageSize,
       name: name.value.trim() || undefined,
       goodsId: goodsId.value.trim() || undefined,
-      status: status.value === 'all' ? undefined : Number(status.value),
+      status: !status.value || status.value === 'all' ? undefined : Number(status.value),
     })
     rows.value = result.rows
     total.value = result.total
@@ -115,6 +115,16 @@ function onViewCodes(item: VirtualGoods) {
 }
 
 /**
+ * 打开批量导入兑换码。
+ *
+ * @param item 行数据
+ */
+function onImport(item: VirtualGoods) {
+  current.value = item
+  importOpen.value = true
+}
+
+/**
  * 切换页码并重新加载。
  *
  * @param next 目标页码
@@ -147,12 +157,9 @@ onMounted(() => {
             <SelectValue placeholder="全部" />
           </SelectTrigger>
           <SelectContent position="popper">
-            <SelectGroup>
-              <SelectLabel>全部状态</SelectLabel>
-              <SelectItem value="all">全部</SelectItem>
-              <SelectItem value="1">上架</SelectItem>
-              <SelectItem value="0">下架</SelectItem>
-            </SelectGroup>
+            <SelectItem value="all">全部</SelectItem>
+            <SelectItem value="1">上架</SelectItem>
+            <SelectItem value="0">下架</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -198,6 +205,7 @@ onMounted(() => {
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'detail')">详情</Button>
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'edit')">编辑</Button>
               <Button size="xs" variant="ghost" @click="onViewCodes(item)">兑换码</Button>
+              <Button size="xs" variant="ghost" @click="onImport(item)">导入兑换码</Button>
               <Button size="xs" variant="destructive" @click="onDelete(item)">删除</Button>
             </div>
           </TableCell>
@@ -225,6 +233,12 @@ onMounted(() => {
       :goods-id="current?.goodsId"
       :goods-name="current?.name"
       @update:open="codeOpen = $event"
+    />
+    <ImportGiftCodeDialog
+      :open="importOpen"
+      :goods-id="current?.goodsId"
+      :goods-name="current?.name"
+      @update:open="importOpen = $event"
     />
   </div>
 </template>

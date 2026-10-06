@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import GiftCodeListDialog from '@/components/virtual-goods/GiftCodeListDialog.vue'
 import ImportGiftCodeDialog from '@/components/virtual-goods/ImportGiftCodeDialog.vue'
 import VirtualGoodsFormDialog from '@/components/virtual-goods/VirtualGoodsFormDialog.vue'
 import { formatDateTime, shelfStatusLabel } from '@/utils/labels'
@@ -31,6 +32,7 @@ const formOpen = ref(false)
 const formMode = ref<'create' | 'edit' | 'detail'>('create')
 const current = ref<VirtualGoods | null>(null)
 const importOpen = ref(false)
+const codeOpen = ref(false)
 
 /**
  * 加载课程商品列表。
@@ -110,6 +112,16 @@ async function onDelete(item: VirtualGoods) {
 function onImport(item: VirtualGoods) {
   current.value = item
   importOpen.value = true
+}
+
+/**
+ * 查看兑换码列表。
+ *
+ * @param item 行数据
+ */
+function onViewCodes(item: VirtualGoods) {
+  current.value = item
+  codeOpen.value = true
 }
 
 /**
@@ -194,6 +206,7 @@ onMounted(() => {
             <div class="flex flex-wrap gap-1">
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'detail')">详情</Button>
               <Button size="xs" variant="ghost" @click="onOpenForm(item, 'edit')">编辑</Button>
+              <Button size="xs" variant="ghost" @click="onViewCodes(item)">兑换码</Button>
               <Button size="xs" variant="ghost" @click="onImport(item)">导入兑换码</Button>
               <Button size="xs" variant="destructive" @click="onDelete(item)">删除</Button>
             </div>
@@ -222,6 +235,12 @@ onMounted(() => {
       :goods-id="current?.goodsId"
       :goods-name="current?.name"
       @update:open="importOpen = $event"
+    />
+    <GiftCodeListDialog
+      :open="codeOpen"
+      :goods-id="current?.goodsId"
+      :goods-name="current?.name"
+      @update:open="codeOpen = $event"
     />
   </div>
 </template>
