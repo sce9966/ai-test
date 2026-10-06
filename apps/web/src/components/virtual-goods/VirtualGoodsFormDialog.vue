@@ -207,9 +207,7 @@ async function onSubmit() {
     <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
       <DialogHeader>
         <DialogTitle>{{ title }}</DialogTitle>
-        <DialogDescription v-if="goods?.goodsId">
-          商品ID：{{ goods.goodsId }}
-        </DialogDescription>
+        <DialogDescription v-if="goods?.goodsId"> 商品ID：{{ goods.goodsId }} </DialogDescription>
       </DialogHeader>
 
       <div class="grid gap-3">
@@ -238,9 +236,11 @@ async function onSubmit() {
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="请选择" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">上架</SelectItem>
-                <SelectItem value="0">下架</SelectItem>
+              <SelectContent position="popper">
+                <SelectGroup>
+                  <SelectItem value="1">上架</SelectItem>
+                  <SelectItem value="0">下架</SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -273,7 +273,7 @@ async function onSubmit() {
               class="h-16 w-16 rounded-md border object-cover"
               alt="封面"
               @click="!readonly && removeCover(index)"
-            >
+            />
           </div>
           <div v-if="!readonly" class="flex items-center gap-2">
             <Input type="file" accept="image/*" :disabled="uploading" @change="onUploadCover" />

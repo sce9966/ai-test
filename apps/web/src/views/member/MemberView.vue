@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import PaginationBar from '@/components/ui/pagination/PaginationBar.vue'
 import {
   Select,
+  SelectGroup,
+  SelectLabel,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -25,7 +27,7 @@ const pageSize = 20
 const total = ref(0)
 const name = ref('')
 const goodsId = ref('')
-const status = ref<string>('all')
+const status = ref<string>('')
 
 const formOpen = ref(false)
 const formMode = ref<'create' | 'edit' | 'detail'>('create')
@@ -144,10 +146,13 @@ onMounted(() => {
           <SelectTrigger class="w-28">
             <SelectValue placeholder="全部" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">全部</SelectItem>
-            <SelectItem value="1">上架</SelectItem>
-            <SelectItem value="0">下架</SelectItem>
+          <SelectContent position="popper">
+            <SelectGroup>
+              <SelectLabel>全部状态</SelectLabel>
+              <SelectItem value="all">全部</SelectItem>
+              <SelectItem value="1">上架</SelectItem>
+              <SelectItem value="0">下架</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

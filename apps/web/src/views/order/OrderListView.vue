@@ -96,7 +96,7 @@ onMounted(() => {
           <SelectTrigger class="w-32">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper">
             <SelectItem value="all">全部</SelectItem>
             <SelectItem value="0">未支付</SelectItem>
             <SelectItem value="1">支付成功</SelectItem>
@@ -110,7 +110,7 @@ onMounted(() => {
           <SelectTrigger class="w-28">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper">
             <SelectItem value="all">全部</SelectItem>
             <SelectItem value="0">正常</SelectItem>
             <SelectItem value="1">完结</SelectItem>

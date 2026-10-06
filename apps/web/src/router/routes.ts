@@ -59,7 +59,7 @@ export const routes: RouteRecordRaw[] = [
         name: 'product',
         component: () => import('../views/product/ProductView.vue'),
         meta: {
-          title: '商品管理',
+          title: '课程管理',
           icon: PackageIcon,
         },
       },

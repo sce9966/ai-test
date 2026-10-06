@@ -135,7 +135,7 @@ onMounted(() => {
           <SelectTrigger class="w-28">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper">
             <SelectItem value="all">全部</SelectItem>
             <SelectItem value="0">未使用</SelectItem>
             <SelectItem value="1">已绑定</SelectItem>
